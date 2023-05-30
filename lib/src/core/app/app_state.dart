@@ -63,23 +63,17 @@ class Store {
 }
 
 // Global Observable injector
-Widget dependencies(List<dynamic> initializers, {required Widget app}) {
-  for (int i = 0; i < initializers.length; i++) {
-    Tuple initializer = initializers[i];
-    initializer;
-  }
+Widget dependencies(List<Tuple> initializers, {required Widget app}) {
+  for (int i = 0; i < initializers.length; i++) {}
   return app;
 }
 
 // Global service injector
-Widget globalServices(
+Widget injector(
     {required Widget app,
     List<Object> objects = const [],
     List<Function> functions = const []}) {
-  for (int i = 0; i < objects.length; i++) {
-    Object initializer = objects[i];
-    initializer;
-  }
+  for (int i = 0; i < objects.length; i++) {}
 
   for (int i = 0; i < functions.length; i++) {
     Function initializer = functions[i];

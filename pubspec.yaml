@@ -1,6 +1,6 @@
 name: o
-description: o is a simple state management util made for flutter.
-version: 0.0.1
+description: o is a simple state management util to manage AppState and LocalState.
+version: 0.0.2
 repository: https://github.com/yuxcat/o
 
 environment:

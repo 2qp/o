@@ -22,7 +22,7 @@ class App extends StatelessWidget {
     return dependencies([
       //useStore<int>('counter', 25),
     ],
-        app: globalServices(
+        app: injector(
             objects: [AuthService(keyname: 'auth')],
             app: const MaterialApp(
               home: AuthView(),

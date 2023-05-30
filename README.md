@@ -2,7 +2,7 @@
 
 ## _Under Progress_
 
-o is a simple state management util made for flutter.
+o is a simple state management util to manage AppState and LocalState.
 
 - Based on Streams
 - Global singleton for AppState
@@ -50,7 +50,7 @@ dependencies(
 dependencies([
       //useStore<int>('counter', 25),
     ],
-        app: globalServices(
+        app: injector(
             objects: [AuthService(keyname: 'auth')],
             functions: [],
             app: const MaterialApp(
@@ -124,7 +124,7 @@ class Listener extends StatelessWidget {
       children: [
         Observer(
           observable: count,
-          builder: (p0, p1, p2, p3) => Text('Local State : ${p2.toString()}'),
+          builder: (context, observable, value, hasData) => Text('Local State : ${value.toString()}'),
         ),
         FloatingActionButton(onPressed: () {
           setCount((prev) => prev + 1);
