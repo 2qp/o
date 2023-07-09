@@ -11,6 +11,7 @@ main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  AuthService.initialize(keyname: 'auth');
   runApp(const App());
 }
 
@@ -18,16 +19,9 @@ class App extends StatelessWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return dependencies([
-      //useStore<int>('counter', 25),
-    ],
-        app: injector(
-            objects: [AuthService(keyname: 'auth')],
-            app: const MaterialApp(
-              home: AuthView(),
-            )));
-  }
+  Widget build(BuildContext context) => const MaterialApp(
+        home: AuthView(),
+      );
 }
 
 class AuthView extends StatelessWidget {
@@ -36,7 +30,7 @@ class AuthView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
-    final (auth, setAuth) = useStore<UserRuntime>('auth', UserRuntime());
+    final (auth, setAuth, _) = useStore<UserRuntime>('auth', UserRuntime());
 
     return Scaffold(
         body: Center(
@@ -44,7 +38,7 @@ class AuthView extends StatelessWidget {
         children: [
           Observer(
             observable: auth,
-            builder: (p0, p1, p2, p3) => Column(
+            builder: (p0, p1, p2) => Column(
               children: [
                 Text('Authenticated ${p2.authenticated.toString()}'),
                 Text('is Ran : ${p2.ran.toString()}'),

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:o/o.dart';
 
-main() => runApp(const App());
+main() {
+  useStore<int>('counter', 150);
+  runApp(const App());
+}
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: dependencies(
-        [useStore<int>('counter', 25)],
-        app: const Scaffold(body: Center(child: Listener())),
-      ),
+    return const MaterialApp(
+      home: Scaffold(body: Center(child: Listener())),
     );
   }
 }
@@ -22,21 +22,35 @@ class Listener extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (count, setCount) = useState(50);
-    final (down, setDown) = useStore('counter', 500);
+    final (count, setCount, _) = useState(50);
+
+    final (pCount, _, setPrev) = useState(50);
+
+    final (down, _, setDown) = useStore('counter', 500);
 
     return Column(
       children: [
         Observer(
           observable: count,
-          builder: (p0, p1, p2, p3) => Text('Local State : ${p2.toString()}'),
+          builder: (context, obs, value) => Text('Local State : $value.'),
+        ),
+        Observer(
+          observable: pCount,
+          builder: (context, obs, value) => Text('Prev State : $value'),
         ),
         Observer(
           observable: down,
-          builder: (p0, p1, p2, p3) => Text('App State : ${p2.toString()}'),
+          builder: (context, obs, value) => Text('App State : $value'),
+        ),
+        Observer(
+          observable: down,
+          builder: (context, obs, value) => Text('App State : $value '),
         ),
         FloatingActionButton(onPressed: () {
-          setCount((prev) => prev + 1);
+          setCount(23);
+
+          setPrev(((prev) => prev + 10));
+
           setDown((prev) => prev - 1);
         }),
       ],

@@ -1,10 +1,32 @@
 // Core
 import 'dart:async';
 
+/// Object that holds the state data.
+///
+/// takes `T` [value] to create an instance.
+///
+/// **Getters**
+/// >-  `value`
+/// >-  `prev`
+/// >-  `stream`
+///
+/// **Setters**
+/// >-  `value`
 class Observable<T> {
-  T _value;
+  /// State value
   T get value => _value;
+
+  /// Previous value
+  T? get prev => _prev;
+
+  /// Stream emitted by `_controller` of `Observable`
+  Stream<T> get stream => _controller.stream;
+
+  T _value;
+  T? _prev;
+
   set value(T v) {
+    _prev = _value;
     _value = v;
     _controller.add(v);
   }
@@ -19,6 +41,7 @@ class Observable<T> {
     }
   }
 
+  /// Closes the `stream` controller of `Observable`
   void dispose() {
     _controller.close();
   }
@@ -26,5 +49,4 @@ class Observable<T> {
   Observable(this._value);
 
   final _controller = StreamController<T>.broadcast();
-  Stream<T> get stream => _controller.stream;
 }

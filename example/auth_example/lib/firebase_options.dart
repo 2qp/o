@@ -53,11 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'cats',
-    appId: 'r',
-    messagingSenderId: 'funny',
-    projectId: 'meanie',
-    authDomain: '..',
-    storageBucket: 'meow',
+    apiKey: '',
+    appId: '',
+    messagingSenderId: '',
+    projectId: '',
+    authDomain: '',
+    storageBucket: '',
   );
 }

@@ -5,6 +5,7 @@
 o is a simple state management util to manage AppState and LocalState.
 
 - Based on Streams
+- Easy LocalState management
 - Global singleton for AppState
 - Beta
 
@@ -16,56 +17,21 @@ o is a simple state management util to manage AppState and LocalState.
 - Notify state
 - Hooks for easy usage
 - Customizable
+- Filter-out unwanted rebuilds.
 
-##### Local State
-
-```dart
-final (count, setCount) = useState(50);
-```
-
-##### App State
+#### Local State
 
 ```dart
-final (down, setDown) = useStore('counter', 500);
+final (count, setCount, _) = useState(50);
+setCount(23);
 ```
-
-##### Widget
 
 ```dart
-Observer(observable: observable, builder: (context, observable, value, hasData) => ...)
+final (count, _, setCount) = useState(50);
+setCount(((prev) => prev + 10));
 ```
 
-##### Dep Injector
-
-```dart
-dependencies(
-        [useStore<int>('counter', 25)],
-        app: const Scaffold(body: Center(child: Listener())),
-      );
-```
-
-##### Service Injector
-
-```dart
-dependencies([
-      //useStore<int>('counter', 25),
-    ],
-        app: injector(
-            objects: [AuthService(keyname: 'auth')],
-            functions: [],
-            app: const MaterialApp(
-              home: AuthView(),
-            )));
-```
-
-## Usage
-
-### App State
-
-> > this `isn't necessary` .
-> > `useStore` always register an observable if there isn't any by the key .
-> > but better .
-> > in any `upper` widget
+###### Usage
 
 ```dart
 class App extends StatelessWidget {
@@ -73,73 +39,122 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: dependencies(
-        [useStore<int>('counter', 25)],
-        app: const Scaffold(body: Center(child: Listener())),
-      ),
+    final (count, setCount, _) = useState(50);
+    final (balls, _, setBalls) = useState(50);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Observer(
+          observable: count,
+          builder: (context, obs, value) => Text('Count : $value'),
+        ),
+        Observer(
+          observable: balls,
+          builder: (context, obs, value) => Text('Balls : $value'),
+        ),
+        OutlinedButton(
+            onPressed: () => setCount(100), child: const Text('make it 100')),
+        OutlinedButton(
+            onPressed: () => setBalls(((prev) => prev + 100)),
+            child: const Text('more balls'))
+      ],
     );
   }
 }
+
 ```
 
-and access it in `any` widget
+#### App State
 
 ```dart
-class Listener extends StatelessWidget {
-  const Listener({super.key});
+final (down, setDown, _) = useStore('counter', 500);
+setDown(69);
+```
+
+```dart
+final (down, _, setDown) = useStore('counter', 500);
+setDown((prev) => prev - 1);
+```
+
+###### Usage
+
+```dart
+
+main() {
+  useStore<int>('counter', 150);
+  // unnecessary, [ref] automatically creates a state if needed.
+  // use it when runtime stream listeners create states.
+  // refer auth_example
+
+  runApp(const MaterialApp(home: App()));
+}
+
+class App extends StatelessWidget {
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final (down, setDown) = useStore('counter', 500);
+    final (down, _, setDown) = useStore('counter', 500); // [ref]
 
     return Column(
       children: [
         Observer(
           observable: down,
-          builder: (context, observable, value, hasData) => Text('App State : ${value.toString()}'),
+          builder: (context, obs, value) => Text('Store : $value'),
         ),
-        FloatingActionButton(onPressed: () {
-          setDown((prev) => prev - 1);
-        }),
+        FloatingActionButton(onPressed: () => setDown((prev) => prev - 1)),
       ],
     );
   }
 }
 ```
 
-### Local State
-
-> > simple
+#### Filtered Local State
 
 ```dart
-class Listener extends StatelessWidget {
-  const Listener({super.key});
+final (count, _, setCount) = useTag(3);
 
-  @override
-  Widget build(BuildContext context) {
-    final (count, setCount) = useState(50);
+setCount((prev)=> 1, tags : ['widget1']); // tags?
+```
 
-    return Column(
-      children: [
-        Observer(
-          observable: count,
-          builder: (context, observable, value, hasData) => Text('Local State : ${value.toString()}'),
-        ),
-        FloatingActionButton(onPressed: () {
-          setCount((prev) => prev + 1);
-        }),
-      ],
-    );
-  }
-}
+###### Usage
+
+```dart
+// same Observer, multiple listeners
+// refer tag_example
+
+Widget : 
+
+TaggedObserver(
+            observable: count,
+            builder: (context, value, obs, invalid) => Text(
+                  'data',
+                  style: TextStyle(
+                    color: invalid ? Colors.white : Colors.blueAccent,
+                  ),
+                ),
+            tag: 'tag')
+        .distinct(); // extension
+        .....
+```
+
+###### TaggedObserver extensions
+
+```dart
+distinct();
+invalidatePrevNext();
+invalidateDistinctPrevNext();
+invalidateNext();
+// refer API docs
 ```
 
 ```sh
 :)
 ```
 
-_Special thanks to [@theniceboy](https://github.com/theniceboy)_ | [Gist](https://gist.github.com/theniceboy/fa1546517f1b18faf3186a31c8f452c6)
+_Special thanks to [@theniceboy](https://github.com/theniceboy)_
+| [Gist](https://gist.github.com/theniceboy/fa1546517f1b18faf3186a31c8f452c6)
 
 ## License
 

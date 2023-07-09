@@ -1,6 +1,6 @@
 {
-  "name": "auth_example",
-  "short_name": "auth_example",
+  "name": "tag_example",
+  "short_name": "tag_example",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
