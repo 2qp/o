@@ -49,7 +49,7 @@ class Listener extends StatelessWidget {
         FloatingActionButton(onPressed: () {
           setCount(23);
 
-          setPrev(((prev) => prev + 10));
+          setPrev((prev) => prev + 10);
 
           setDown((prev) => prev - 1);
         }),

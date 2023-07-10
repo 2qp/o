@@ -28,7 +28,7 @@ setCount(23);
 
 ```dart
 final (count, _, setCount) = useState(50);
-setCount(((prev) => prev + 10));
+setCount((prev) => prev + 10);
 ```
 
 ###### Usage
@@ -56,7 +56,7 @@ class App extends StatelessWidget {
         OutlinedButton(
             onPressed: () => setCount(100), child: const Text('make it 100')),
         OutlinedButton(
-            onPressed: () => setBalls(((prev) => prev + 100)),
+            onPressed: () => setBalls((prev) => prev + 100),
             child: const Text('more balls'))
       ],
     );

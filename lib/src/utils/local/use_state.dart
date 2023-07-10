@@ -11,7 +11,7 @@ import 'package:o/src/core/core.dart';
 ///
 /// ```dart
 /// final (pCount, _, setPrev) = useState(50);
-/// setPrev(((prev) => prev + 10));
+/// setPrev((prev) => prev + 10);
 /// ````
 ///
 /// **Records** :
