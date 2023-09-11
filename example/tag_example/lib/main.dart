@@ -24,12 +24,19 @@ class BottomNavBarView extends StatelessWidget {
   Widget build(BuildContext context) => const CustomNavBar();
 }
 
-class CustomNavBar extends StatelessWidget {
+class CustomNavBar extends StatefulWidget {
   const CustomNavBar({super.key});
 
   @override
+  State<CustomNavBar> createState() => _CustomNavBarState();
+}
+
+class _CustomNavBarState extends State<CustomNavBar> {
+  final $count = useTag(3);
+
+  @override
   Widget build(BuildContext context) {
-    final (count, setCount, _) = useTag(3);
+    final (count, setCount, _) = $count;
 
     final List<NavItem> items = [
       NavItem(

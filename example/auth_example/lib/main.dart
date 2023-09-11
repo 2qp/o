@@ -24,9 +24,14 @@ class App extends StatelessWidget {
       );
 }
 
-class AuthView extends StatelessWidget {
+class AuthView extends StatefulWidget {
   const AuthView({super.key});
 
+  @override
+  State<AuthView> createState() => _AuthViewState();
+}
+
+class _AuthViewState extends State<AuthView> {
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
@@ -38,11 +43,11 @@ class AuthView extends StatelessWidget {
         children: [
           Observer(
             observable: auth,
-            builder: (p0, p1, p2) => Column(
+            builder: (context, obs, value) => Column(
               children: [
-                Text('Authenticated ${p2.authenticated.toString()}'),
-                Text('is Ran : ${p2.ran.toString()}'),
-                Text('User : ${p2.user?.email.toString()}'),
+                Text('Authenticated ${value.authenticated.toString()}'),
+                Text('is Ran : ${value.ran.toString()}'),
+                Text('User : ${value.user?.email.toString()}'),
               ],
             ),
           ),

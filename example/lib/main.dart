@@ -1,8 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:o/o.dart';
 
 main() {
-  useStore<int>('counter', 150);
   runApp(const App());
 }
 
@@ -17,16 +17,21 @@ class App extends StatelessWidget {
   }
 }
 
-class Listener extends StatelessWidget {
+class Listener extends StatefulWidget {
   const Listener({super.key});
 
   @override
+  State<Listener> createState() => _ListenerState();
+}
+
+class _ListenerState extends State<Listener> {
+  final $local = useState(50);
+  final $global = useStore('counter', 500);
+
+  @override
   Widget build(BuildContext context) {
-    final (count, setCount, _) = useState(50);
-
-    final (pCount, _, setPrev) = useState(50);
-
-    final (down, _, setDown) = useStore('counter', 500);
+    final (count, _, _) = $local;
+    final (down, _, _) = $global;
 
     return Column(
       children: [
@@ -35,25 +40,22 @@ class Listener extends StatelessWidget {
           builder: (context, obs, value) => Text('Local State : $value.'),
         ),
         Observer(
-          observable: pCount,
-          builder: (context, obs, value) => Text('Prev State : $value'),
-        ),
-        Observer(
           observable: down,
           builder: (context, obs, value) => Text('App State : $value'),
         ),
-        Observer(
-          observable: down,
-          builder: (context, obs, value) => Text('App State : $value '),
+        FloatingActionButton(
+          onPressed: handleClick,
+          child: const Icon(CupertinoIcons.add),
         ),
-        FloatingActionButton(onPressed: () {
-          setCount(23);
-
-          setPrev((prev) => prev + 10);
-
-          setDown((prev) => prev - 1);
-        }),
       ],
     );
+  }
+
+  void handleClick() {
+    final (_, setCount, _) = $local;
+    final (_, _, setDown) = $global;
+
+    setCount(23);
+    setDown((prev) => prev - 1);
   }
 }

@@ -15,3 +15,8 @@
 * Removed Dep | Service Injector.
 * Added tag_example and updated main | auth_example.
 * Updated API Docs.
+
+## 0.0.4
+
+* Updated Docs.
+* Updated Examples.

@@ -6,20 +6,19 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   static late final String _key;
 
-  factory AuthService({required String keyname}) {
+  factory AuthService.initialize({required String keyname}) {
+    assert(keyname.isNotEmpty, 'keyname must not be null');
+    _key = keyname;
+
     // Prevent multiple instances with different keynames
     assert(_key == keyname,
         'Cannot instantiate more than once with different keyname');
+
     return _instance;
   }
 
-  static void initialize({required String keyname}) {
-    _key = keyname;
-  }
-
   AuthService._internal() {
-    // ignore: unused_local_variable
-    final (usr, _, setUser) = useStore(_key, UserRuntime());
+    final (_, _, setUser) = useStore(_key, UserRuntime());
 
     _auth.authStateChanges().listen((User? user) async {
       setUser((value) => UserRuntime(user: user));

@@ -3,9 +3,6 @@
 *.log
 *.pyc
 *.swp
-*.xcconfig
-*local.properties
-flutter_export_environment.sh
 .DS_Store
 .atom/
 .buildlog/
