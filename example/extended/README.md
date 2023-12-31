@@ -1,4 +1,4 @@
-# auth_example
+# extended
 
 A new Flutter project.
 

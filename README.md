@@ -3,192 +3,169 @@ O is a simple state management util to manage AppState and LocalState.
 
 - Based on Streams
 - Easy LocalState management
-- Global singleton for AppState
+- Globals for AppState
 
 ## Features
 
 - StreamBuilder based helper widgets
 - Previous state
-- Notify state
 - Hooks for easy usage
-- Customizable
-- Filter-out unwanted rebuilds.
 
 #### Local State
 
 ```dart
-final $count = useState(50); // define
+final count = useState(50); // define
 
-final (countO, setCount, _) = $count; // O means Observable
-setCount(23);
+count.set(23); // [ASYNC SUPPORTED]
 ```
 
 ```dart
-final $balls = useState(50);
+final balls = useState(50);
 
-final (ballsO, _, setBalls) = $balls;
-setBalls((prev) => prev + 100)
+balls.update((prev) => prev + 100) // [ASYNC SUPPORTED]
 ```
 
 ###### Usage
 
-```dart
-class App extends StatefulWidget {
-  const App({super.key});
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  final $count = useState(50);
-  final $balls = useState(50);
-
-  @override
-  Widget build(BuildContext context) {
-    final (countO, setCount, _) = $count;
-    final (ballsO, _, _) = $balls;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Observer(
-          observable: countO,
-          builder: (context, obs, value) => Text('Count : $value'),
-        ),
-        Observer(
-          observable: ballsO,
-          builder: (context, obs, value) => Text('Balls : $value'),
-        ),
-        OutlinedButton(
-            onPressed: () => setCount(100), child: const Text('make it 100')),
-        OutlinedButton(onPressed: handleBalls, child: const Text('more balls'))
-      ],
-    );
-  }
-
-  void handleBalls() {
-    final (_, _, setBalls) = $balls;
-    setBalls((prev) => prev + 100);
-  }
-}
-
-```
-
-#### App State
-
-```dart
-final $count = useStore('counter', 500);
-
-final (countO, _, setDown) = $count;
-setDown(69);
-```
-
-```dart
-final $count = useStore('counter', 500);
-
-final (countO, _, setDown) = $count;
-setDown((prev) => prev - 1);
-```
-
-###### Usage
-
-```dart
-
-class App extends StatefulWidget {
-  const App({super.key});
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  final $count = useStore('count', 500);
-
-  @override
-  Widget build(BuildContext context) {
-    final (countO, _, setDown) = $count;
-
-    return Column(
-      children: [
-        Observer(
-          observable: countO,
-          builder: (context, obs, value) => Text('Store : $value'),
-        ),
-        FloatingActionButton(onPressed: () => setDown((prev) => prev - 1)),
-      ],
-    );
-  }
-}
-
-```
-
-#### Filtered Local State
-
-```dart
-final $count = useTag(3);
-
-final (count, setCount, _) = $count;
-setCount(1, tags : ['widget1']); // tags?
-```
-
-###### Usage
-
-```dart
-// same Observer, multiple listeners
-// refer tag_example
-
-Widget : 
-
-TaggedObserver(
-            observable: count,
-            builder: (context, value, obs, invalid) => Text(
-                  'data',
-                  style: TextStyle(
-                    color: invalid ? Colors.white : Colors.blueAccent,
-                  ),
-                ),
-            tag: 'tag')
-        .distinct(); // extension
-        .....
-```
-###### TaggedObserver extensions
-
-```dart
-distinct();
-invalidatePrevNext();
-invalidateDistinctPrevNext();
-invalidateNext();
-// refer API docs
-```
-#### Stateless usage
 ```dart
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final (count, setCount, _) = useState(50);
-    final (balls, _, setBalls) = useStore('counter', 50);
+  Widget build(BuildContext context) => const MaterialApp(home: Home());
+}
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Observer(
-          observable: count,
-          builder: (context, obs, value) => Text('Count : $value'),
-        ),
-        Observer(
-          observable: balls,
-          builder: (context, obs, value) => Text('Balls : $value'),
-        ),
-        OutlinedButton(
-            onPressed: () => setCount(100), child: const Text('make it 100')),
-        OutlinedButton(
-            onPressed: () => setBalls((prev) => prev + 100),
-            child: const Text('more balls'))
-      ],
-    );
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final balls = useState(50);
+
+  @override
+  void dispose() {
+    balls.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+          body: Center(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+            Observer(
+                observable: balls.o,
+                builder: (context, value) => Text('Balls : $value')),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              IconButton(
+                  onPressed: () => balls.set(100),
+                  icon: const Icon(CupertinoIcons.add)),
+              IconButton(
+                  onPressed: handleBalls,
+                  icon: const Icon(CupertinoIcons.infinite)),
+              IconButton(
+                  onPressed: () => print('do something w : ${balls.get()}'),
+                  icon: const Icon(CupertinoIcons.doc))
+            ])
+          ])));
+
+  void handleBalls() => balls.update((prev) => prev + 100);
+  
+  // void handleBalls() async {
+  //   await balls.update((prev) => prev + 100);  // await for Instant Updates
+  //   print('do something w : ${balls.get()}');
+  // }
+}
+```
+
+#### App State
+
+```dart
+// [counter_store.dart]
+
+final $global = createStore<int, CounterActions>(1, _counterReducer);
+
+sealed class CounterActions {
+  const CounterActions();
+}
+
+class IncrementAction extends CounterActions {
+  final int amount;
+  const IncrementAction(this.amount);
+}
+
+class GetCounterAction extends CounterActions {
+  const GetCounterAction();
+}
+
+// [ASYNC T SUPPORTED]
+int _counterReducer(int state, CounterActions action) => switch (action) {
+      IncrementAction(amount: final amount) => (state + amount),
+      GetCounterAction() => state
+    };
+```
+
+```dart
+// [basic usage]
+$global.dispatch(const IncrementAction(1));
+
+___or___
+
+final updated = await $global.dispatch(const IncrementAction(1));
+```
+
+###### Usage
+
+```dart
+
+class App extends StatefulWidget {
+  const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void dispose() {
+    $global.dispose(); // Dispose through highest widget
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => const MaterialApp(home: Home());
+}
+
+class Home extends StatelessWidget {
+  const Home({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+          body: Center(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+            Observer(
+                observable: $global.o,
+                builder: (context, value) => Text('App State : $value')),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              IconButton(
+                  onPressed: handleClick, icon: const Icon(CupertinoIcons.add)),
+              IconButton(
+                  onPressed: doSomething, icon: const Icon(CupertinoIcons.doc))
+            ])
+          ])));
+
+  void handleClick() async => $global.dispatch(const IncrementAction(1));
+
+  void doSomething() async {
+    final counter = await $global.dispatch(const GetCounterAction());
+
+    print('do something w : $counter');
   }
 }
 ```

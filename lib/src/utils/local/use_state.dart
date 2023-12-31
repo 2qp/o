@@ -1,36 +1,73 @@
-// Local state
-import 'package:o/src/core/core.dart';
+part of '../../core/core.dart';
 
-/// Record to expose `Observable` and  `void Function(T)` / `void Function(T Function(T))` to create state with provided [initialValue].
+/// Record to expose `Observable` and
+/// `T Function()` and
+/// `FutureOr<void> Function(T)` and
+/// `FutureOr<void> Function(T Function(T))` and
+/// `void Function()` to create state with provided [initialValue].
 ///
 /// ```dart
-/// final (count, setCount, _) = useState(50);
-/// setCount(5);
+/// final count = useState(50);
+/// count.setCount(5); // [ASYNC SUPPORTED]
 /// ````
-/// **Prev Value**
+/// **Update Value**
 ///
 /// ```dart
-/// final (pCount, _, setPrev) = useState(50);
-/// setPrev((prev) => prev + 10);
+/// count.update((prev) => prev + 10); // [ASYNC SUPPORTED]
+/// ````
+/// **Read Value**
+///
+/// ```dart
+/// final updated = count.get();
 /// ````
 ///
 /// **Records** :
-/// >- `Observable` | Ex : count
-/// >- `void Function(T)`
-/// >- `void Function(T Function(T)`
+/// >- `Observable` | o
+/// >- `T Function()` | get();
+/// >- `void Function(T)` | set(T);
+/// >- `void Function(T Function(T)` | update(T Function(T))
+/// >- `void Function()` | dispose();
 ///
 /// **Args**
 /// >- T initialValue
 /// >> ```dart
 /// >> ```
 ///
-(Observable<T> x, void Function(T) y, void Function(T Function(T prev)) z)
-    useState<T>(T initialValue) {
-  final observable = Observable<T>(initialValue);
+({
+  Observable<T, U> o,
+  T Function() get,
+  FutureOr<void> Function(FutureOr<T>) set,
+  FutureOr<void> Function(FutureOr<T> Function(T prev)) update,
+  void Function() dispose
+}) useState<T, U>(T initialValue) {
+  final controller = StreamController<T>.broadcast();
+  void dispose() => controller.close();
+
+  final o = Observable<T, U>(initialValue, controller);
+
+  T get() {
+    try {
+      return o._copyWith((o.value)).value;
+    } catch (e) {
+      if (kDebugMode) {
+        print('CONTROLLER DISPOSED ON LOCAL STATE');
+        print('Error Details: $e');
+      }
+      return o.value;
+    }
+  }
 
   return (
-    observable,
-    (modifier) => observable.value = modifier,
-    (modifier) => observable.value = modifier(observable.value)
+    o: o,
+    get: get,
+
+    /// Direct setter
+    set: (modifier) async => o._notify(await modifier),
+
+    /// Update with prev value
+    update: (modifier) async => o._notify(await modifier(o.value)),
+
+    /// Controller disposer
+    dispose: dispose
   );
 }

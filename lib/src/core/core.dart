@@ -1,5 +1,9 @@
-// Core
 import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:o/src/utils/typedefs.dart';
+
+part '../utils/local/use_state.dart';
+part '../utils/app/app_state.dart';
 
 /// Object that holds the state data.
 ///
@@ -12,41 +16,30 @@ import 'dart:async';
 ///
 /// **Setters**
 /// >-  `value`
-class Observable<T> {
+
+class Observable<T, U> {
+  T _value;
+
   /// State value
   T get value => _value;
 
-  /// Previous value
-  T? get prev => _prev;
+  final StreamController<T> _controller;
 
-  /// Stream emitted by `_controller` of `Observable`
   Stream<T> get stream => _controller.stream;
 
-  T _value;
-  T? _prev;
-
-  set value(T v) {
-    _prev = _value;
-    _value = v;
-    _controller.add(v);
+  /// State notifier
+  @protected
+  void _notify(T? v) {
+    _value = v ?? _value;
+    _controller.add(v ?? _value);
   }
 
-  void notify() {
-    _controller.add(_value);
+  /// O copier
+  @protected
+  Observable<T, U> _copyWith([T? v, StreamController<T>? c]) {
+    _notify(v);
+    return Observable<T, U>(v ?? _value, c ?? _controller);
   }
 
-  void setIfChanged(T v) {
-    if (v != _value) {
-      value = v;
-    }
-  }
-
-  /// Closes the `stream` controller of `Observable`
-  void dispose() {
-    _controller.close();
-  }
-
-  Observable(this._value);
-
-  final _controller = StreamController<T>.broadcast();
+  Observable(this._value, this._controller);
 }

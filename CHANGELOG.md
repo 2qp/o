@@ -20,3 +20,11 @@
 
 * Updated Docs.
 * Updated Examples.
+
+## 0.0.5
+
+* AppState from Singleton -> Global.
+* AppState Dispatch.
+* Removed TaggedObserver.
+* Updated Docs.
+* Updated Examples.
