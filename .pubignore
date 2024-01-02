@@ -1,0 +1,5 @@
+examples
+
+# Ignore everything in the example directory in the root
+example/*
+!example/README.md
