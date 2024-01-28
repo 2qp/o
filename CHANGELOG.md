@@ -28,3 +28,7 @@
 * Removed TaggedObserver.
 * Updated Docs.
 * Updated Examples.
+
+## 0.0.6
+
+* Removed unnecessary generic param.

@@ -24,7 +24,7 @@ part of '../../core/core.dart';
 /// >> ```dart
 /// >> ```
 ///
-({Observable<T, U> o, Dispatch<T, U> dispatch, void Function() dispose})
+({Observable<T> o, Dispatch<T, U> dispatch, void Function() dispose})
     createStore<T, U>(
   T initial,
   Reducer<T, U> reducer,
@@ -32,7 +32,7 @@ part of '../../core/core.dart';
   final controller = StreamController<T>.broadcast();
   void dispose() => controller.close();
 
-  final o = Observable<T, U>(initial, controller);
+  final o = Observable<T>(initial, controller);
 
   FutureOr<T> dispatch(U actions) async {
     final reduced = await reducer(o.value, actions);

@@ -17,7 +17,7 @@ part '../utils/app/app_state.dart';
 /// **Setters**
 /// >-  `value`
 
-class Observable<T, U> {
+class Observable<T> {
   T _value;
 
   /// State value
@@ -36,9 +36,9 @@ class Observable<T, U> {
 
   /// O copier
   @protected
-  Observable<T, U> _copyWith([T? v, StreamController<T>? c]) {
+  Observable<T> _copyWith([T? v, StreamController<T>? c]) {
     _notify(v);
-    return Observable<T, U>(v ?? _value, c ?? _controller);
+    return Observable<T>(v ?? _value, c ?? _controller);
   }
 
   Observable(this._value, this._controller);

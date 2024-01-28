@@ -1,6 +1,6 @@
 name: o
 description: o is a simple state management util to manage AppState and LocalState.
-version: 0.0.5
+version: 0.0.6
 repository: https://github.com/2qp/o
 
 environment:

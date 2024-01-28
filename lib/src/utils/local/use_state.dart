@@ -34,16 +34,16 @@ part of '../../core/core.dart';
 /// >> ```
 ///
 ({
-  Observable<T, U> o,
+  Observable<T> o,
   T Function() get,
   FutureOr<void> Function(FutureOr<T>) set,
   FutureOr<void> Function(FutureOr<T> Function(T prev)) update,
   void Function() dispose
-}) useState<T, U>(T initialValue) {
+}) useState<T>(T initialValue) {
   final controller = StreamController<T>.broadcast();
   void dispose() => controller.close();
 
-  final o = Observable<T, U>(initialValue, controller);
+  final o = Observable<T>(initialValue, controller);
 
   T get() {
     try {
