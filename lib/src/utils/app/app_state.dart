@@ -36,11 +36,11 @@ part of '../../core/core.dart';
 
   FutureOr<T> dispatch(U actions) async {
     final reduced = await reducer(o.value, actions);
-    final $o = o._copyWith(reduced, null);
+    o._notify(reduced);
 
     /// ACTION IDENTIFIER [kDebugMode]
     if (kDebugMode) print(actions?.runtimeType);
-    return $o._value;
+    return o._value;
   }
 
   return (o: o, dispatch: dispatch, dispose: dispose);

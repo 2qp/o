@@ -1,6 +1,6 @@
 name: o
 description: o is a simple state management util to manage AppState and LocalState.
-version: 0.0.6
+version: 0.0.7
 repository: https://github.com/2qp/o
 
 environment:
@@ -14,7 +14,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

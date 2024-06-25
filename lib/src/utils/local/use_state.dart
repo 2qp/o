@@ -45,17 +45,7 @@ part of '../../core/core.dart';
 
   final o = Observable<T>(initialValue, controller);
 
-  T get() {
-    try {
-      return o._copyWith((o.value)).value;
-    } catch (e) {
-      if (kDebugMode) {
-        print('CONTROLLER DISPOSED ON LOCAL STATE');
-        print('Error Details: $e');
-      }
-      return o.value;
-    }
-  }
+  T get() => o.value;
 
   return (
     o: o,

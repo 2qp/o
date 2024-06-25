@@ -32,3 +32,7 @@
 ## 0.0.6
 
 * Removed unnecessary generic param.
+
+## 0.0.7
+
+* Removed unnecessary _copyWith.

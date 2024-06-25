@@ -29,16 +29,9 @@ class Observable<T> {
 
   /// State notifier
   @protected
-  void _notify(T? v) {
-    _value = v ?? _value;
-    _controller.add(v ?? _value);
-  }
-
-  /// O copier
-  @protected
-  Observable<T> _copyWith([T? v, StreamController<T>? c]) {
-    _notify(v);
-    return Observable<T>(v ?? _value, c ?? _controller);
+  void _notify(T v) {
+    _value = v;
+    _controller.add(v);
   }
 
   Observable(this._value, this._controller);
